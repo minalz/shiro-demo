@@ -35,5 +35,12 @@ public class ScmciwhRoleModel implements Serializable {
     String memo;
     Integer isbacked;// 0: PC 1:PDA
 
+    @ManyToMany(targetEntity = ScmciwhUserModel.class,cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @JoinTable(name = "scmciwh_user_role",
+            joinColumns = @JoinColumn(name="roleid",referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "userid",referencedColumnName = "id"))
+//    @ManyToMany(mappedBy = "roles")
+    private List<ScmciwhUserModel> users;
+
 
 }
