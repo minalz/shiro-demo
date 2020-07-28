@@ -4,7 +4,9 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.List;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @Entity
@@ -26,8 +28,11 @@ public class ScmciwhUserModel implements Serializable {
 
     @ManyToMany(targetEntity = ScmciwhRoleModel.class,cascade = CascadeType.ALL,fetch = FetchType.EAGER)
     @JoinTable(name = "scmciwh_user_role",
-            joinColumns = @JoinColumn(name="userid",referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "roleid",referencedColumnName = "id"))
-    private List<ScmciwhRoleModel> roles;
+            //joinColumns,当前对象在中间表中的外键
+            joinColumns = {@JoinColumn(name = "userid",referencedColumnName = "id")},
+            //inverseJoinColumns，对方对象在中间表的外键
+            inverseJoinColumns = {@JoinColumn(name = "roleid",referencedColumnName = "id")}
+    )
+    private Set<ScmciwhRoleModel> roles = new HashSet<>();
 
 }
