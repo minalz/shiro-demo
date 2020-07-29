@@ -26,7 +26,7 @@ public class ScmciwhUserModel implements Serializable {
     String werks;//工厂
     String initial;//初始密码
 
-    @ManyToMany(targetEntity = ScmciwhRoleModel.class,cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @ManyToMany(targetEntity = ScmciwhRoleModel.class,cascade = CascadeType.REMOVE,fetch = FetchType.EAGER)
     @JoinTable(name = "scmciwh_user_role",
             //joinColumns,当前对象在中间表中的外键
             joinColumns = {@JoinColumn(name = "userid",referencedColumnName = "id")},

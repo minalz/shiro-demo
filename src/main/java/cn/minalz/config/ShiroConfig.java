@@ -6,16 +6,22 @@ import cn.minalz.config.shiro.MyRedisCacheManager;
 import cn.minalz.config.shiro.ShiroRedisSessionDao;
 import cn.minalz.dao.ScmciwhUserRepository;
 import org.apache.shiro.cache.CacheManager;
+import org.apache.shiro.mgt.SecurityManager;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.session.mgt.eis.SessionDAO;
+import org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
+import org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -41,7 +47,7 @@ public class ShiroConfig {
 
         myRealm.setAuthenticationCachingEnabled(false);
         //设置缓存管理器
-//        myRealm.setCacheManager(cacheManager());
+        myRealm.setCacheManager(cacheManager());
         return myRealm;
     }
 
@@ -49,7 +55,7 @@ public class ShiroConfig {
     public DefaultWebSecurityManager securityManager() {
         // 创建 DefaultWebSecurityManager 对象
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
-//        securityManager.setSessionManager(sessionManager());
+        securityManager.setSessionManager(sessionManager());
         // 设置其使用的 Realm
         securityManager.setRealm(this.realm());
         return securityManager;
@@ -91,7 +97,7 @@ public class ShiroConfig {
     }
 
     /**
-     * 会话管理器
+     * 自定义会话管理器
      * @return
      */
     @Bean
@@ -99,10 +105,14 @@ public class ShiroConfig {
         DefaultWebSessionManager sessionManager = new DefaultWebSessionManager();
         sessionManager.setSessionDAO(redisSessionDAO());
 
-        //设置会话过期时间
-        sessionManager.setGlobalSessionTimeout(3*60*1000); //默认半小时
-        sessionManager.setDeleteInvalidSessions(true); //默认自定调用SessionDAO的delete方法删除会话
-        //设置会话定时检查
+        // 设置会话过期时间
+        // 默认半小时
+        sessionManager.setGlobalSessionTimeout(3*60*1000);
+        // 默认自动调用SessionDAO的delete方法删除会话
+        sessionManager.setDeleteInvalidSessions(true);
+        // 删除在session过期时跳转页面时自动在URL中添加JSESSIONID
+        sessionManager.setSessionIdUrlRewritingEnabled(false);
+        // 设置会话定时检查
         //        sessionManager.setSessionValidationInterval(180000); //默认一小时
         //        sessionManager.setSessionValidationSchedulerEnabled(true);
         return sessionManager;

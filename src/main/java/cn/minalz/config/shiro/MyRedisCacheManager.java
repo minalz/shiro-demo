@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 
 /**
- *
+ * 自定义Redis的缓存管理器
  */
 public class MyRedisCacheManager implements CacheManager {
     @Autowired

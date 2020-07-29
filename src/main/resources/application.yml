@@ -42,5 +42,21 @@ spring:
         order_inserts: true
         naming:
           implicit-strategy: default
-    show-sql: true
+    show-sql: false
     open-in-view: false
+
+---
+spring:
+  redis:
+    database: 1
+    host: 47.96.73.9
+  #  password: fanyu@2018
+    port: 6479
+    timeout: 3000
+    jedis:
+      pool:
+        max-idle: 500
+        min-idle: 50
+        max-active: 2000
+        max-wait: 1000
+    testOnBorrow: true

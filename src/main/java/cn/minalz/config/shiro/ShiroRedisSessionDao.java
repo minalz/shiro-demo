@@ -8,9 +8,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 /**
- *
+ * 自定义redis中的session管理
  */
 public class ShiroRedisSessionDao extends CachingSessionDAO {
 
@@ -32,6 +34,7 @@ public class ShiroRedisSessionDao extends CachingSessionDAO {
             logger.error("session or session id is null");
             return ;
         }
+        System.out.println("session时间过期了，需要进行删除---" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
         //根据session id删除session
         redisTemplate.boundHashOps(SHIRO_SESSION_KEY).delete(session.getId());
     }

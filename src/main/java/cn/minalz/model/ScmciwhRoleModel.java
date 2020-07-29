@@ -3,6 +3,8 @@ package cn.minalz.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -11,7 +13,9 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
-@Data
+//@Data
+@Getter
+@Setter
 @Entity
 @Table(name = "scmciwh_role", indexes = {
     @Index(name="werks", columnList="werks"),
@@ -38,10 +42,11 @@ public class ScmciwhRoleModel implements Serializable {
     Integer isbacked;// 0: PC 1:PDA
 
     //配置多对多 单边关系维护 ScmciwhUserModel进行维护
-//    @ManyToMany(mappedBy = "roles")
-//    private Set<ScmciwhUserModel> users = new HashSet<>();
+    @ManyToMany(mappedBy = "roles")
+    @Transient
+    private Set<ScmciwhUserModel> users = new HashSet<>();
 
-    @ManyToMany(targetEntity = ScmciwhPermissionModel.class,cascade = CascadeType.ALL,fetch = FetchType.EAGER)
+    @OneToMany(targetEntity = ScmciwhPermissionModel.class,cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
     @JoinTable(name = "tb_role_perm",
             //joinColumns,当前对象在中间表中的外键
             joinColumns = {@JoinColumn(name = "role_id",referencedColumnName = "id")},
