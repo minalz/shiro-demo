@@ -16,7 +16,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
- * 自定义Redis的缓存管理器实现类
+ *
  */
 public class ShiroRedisCache<K, V> implements Cache<K, V> {
     private static Logger LOGGER = LogManager.getLogger(ShiroRedisCache.class);
@@ -34,6 +34,7 @@ public class ShiroRedisCache<K, V> implements Cache<K, V> {
     /**
      * jedis 连接工厂
      */
+
     private RedisTemplate redisTemplate;
 
     /**

@@ -48,15 +48,5 @@ spring:
 ---
 spring:
   redis:
-    database: 1
     host: 47.96.73.9
-  #  password: fanyu@2018
-    port: 6479
-    timeout: 3000
-    jedis:
-      pool:
-        max-idle: 500
-        min-idle: 50
-        max-active: 2000
-        max-wait: 1000
-    testOnBorrow: true
+    port: 6479  #可不配，因为底层默认值为6379

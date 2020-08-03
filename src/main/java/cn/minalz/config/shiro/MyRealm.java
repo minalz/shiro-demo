@@ -58,9 +58,9 @@ public class MyRealm extends AuthorizingRealm {
     protected AuthenticationInfo doGetAuthenticationInfo(AuthenticationToken token) throws AuthenticationException {
         //token是封装好的用户提交的用户名密码
         String username = ((UsernamePasswordToken) token).getUsername();
-        char[] password = ((UsernamePasswordToken) token).getPassword();
-        System.out.println(password + "---");
-        System.out.println(String.valueOf(password));
+//        char[] password = ((UsernamePasswordToken) token).getPassword();
+//        System.out.println(password + "---");
+//        System.out.println(String.valueOf(password));
         //获取用户
         ScmciwhUserModel user = scmciwhUserRepository.findByUsername(username);
         if(user == null){
