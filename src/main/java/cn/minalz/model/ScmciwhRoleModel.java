@@ -42,9 +42,9 @@ public class ScmciwhRoleModel implements Serializable {
     Integer isbacked;// 0: PC 1:PDA
 
     //配置多对多 单边关系维护 ScmciwhUserModel进行维护
-    @ManyToMany(mappedBy = "roles")
-    @Transient
-    private Set<ScmciwhUserModel> users = new HashSet<>();
+//    @ManyToMany(mappedBy = "roles")
+//    @Transient
+//    private Set<ScmciwhUserModel> users = new HashSet<>();
 
     @OneToMany(targetEntity = ScmciwhPermissionModel.class,cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
     @JoinTable(name = "tb_role_perm",
