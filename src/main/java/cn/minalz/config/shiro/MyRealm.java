@@ -72,4 +72,25 @@ public class MyRealm extends AuthorizingRealm {
             return authenticationInfo;
         }
     }
+
+    /**
+     * 建议重写此方法，提供唯一的缓存Key
+     */
+    @Override
+    protected Object getAuthorizationCacheKey(PrincipalCollection principals) {
+        ScmciwhUserModel user = (ScmciwhUserModel) principals.getPrimaryPrincipal();
+        return user.getUsername();
+//        return super.getAuthorizationCacheKey(principals);
+    }
+
+    /**
+     * 建议重写此方法，提供唯一的缓存Key
+     */
+    @SuppressWarnings("unchecked")
+    @Override
+    protected Object getAuthenticationCacheKey(PrincipalCollection principals) {
+        ScmciwhUserModel user = (ScmciwhUserModel) principals.getPrimaryPrincipal();
+        return user.getUsername();
+//        return super.getAuthenticationCacheKey(principals);
+    }
 }

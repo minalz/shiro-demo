@@ -1,9 +1,6 @@
 package cn.minalz.config;
 
-import cn.minalz.config.shiro.MyCredentialsMatcher;
-import cn.minalz.config.shiro.MyRealm;
-import cn.minalz.config.shiro.MyRedisCacheManager;
-import cn.minalz.config.shiro.ShiroRedisSessionDao;
+import cn.minalz.config.shiro.*;
 import cn.minalz.dao.ScmciwhUserRepository;
 import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.realm.Realm;
@@ -16,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import javax.servlet.Filter;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -68,11 +66,23 @@ public class ShiroConfig {
         filterFactoryBean.setSuccessUrl("/login_success"); // 登陆成功 URL
         filterFactoryBean.setUnauthorizedUrl("/unauthorized"); // 无权限 URL
 
+        // 添加自定义的shiro注销过滤器
+//        filterFactoryBean.setFilters(myFilters());
+
         // <4> 设置 URL 的权限配置
         filterFactoryBean.setFilterChainDefinitionMap(this.filterChainDefinitionMap());
 
         return filterFactoryBean;
     }
+
+    /**
+     * 配置自定义的shiro注销过滤器
+     * @return
+     */
+    /*@Bean
+    public MyLogoutFilter myLogoutFilter(){
+        return new MyLogoutFilter();
+    }*/
 
     /**
      * 配置自定义的加密方式
@@ -101,7 +111,7 @@ public class ShiroConfig {
 
         // 设置会话过期时间
         // 默认半小时
-        sessionManager.setGlobalSessionTimeout(3*60*1000);
+        sessionManager.setGlobalSessionTimeout(30*60*1000);
         // 默认自动调用SessionDAO的delete方法删除会话
         sessionManager.setDeleteInvalidSessions(true);
         // 删除在session过期时跳转页面时自动在URL中添加JSESSIONID
@@ -124,13 +134,23 @@ public class ShiroConfig {
      */
     private Map<String, String> filterChainDefinitionMap() {
         Map<String, String> filterMap = new LinkedHashMap<>(); // 注意要使用有序的 LinkedHashMap ，顺序匹配
-        filterMap.put("/login", "anon"); // 允许匿名访问
-        filterMap.put("/", "anon"); // 允许匿名访问
+//        filterMap.put("/login", "anon"); // 允许匿名访问
+//        filterMap.put("/", "anon"); // 允许匿名访问
         filterMap.put("/scmciwh/admin", "roles[CJGLY]"); // 超级管理员
         filterMap.put("/scmciwh/normal", "roles[GLDP]"); // 需要 NORMAL 角色
         filterMap.put("/logout", "logout"); // 退出
         filterMap.put("/**", "authc"); // 默认剩余的 URL ，需要经过认证
         return filterMap;
     }
+
+    /**
+     * 自定义配置拦截器
+     * @return
+     */
+    /*private Map<String, Filter> myFilters(){
+        Map<String, Filter> filtersMap = new LinkedHashMap<>();
+        filtersMap.put("logout", myLogoutFilter());
+        return filtersMap;
+    }*/
 
 }
