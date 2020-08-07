@@ -1,18 +1,17 @@
 package cn.minalz.config.shiro;
 
+import cn.minalz.model.ScmciwhUserModel;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheException;
+import org.apache.shiro.subject.PrincipalCollection;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializer;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -212,6 +211,7 @@ public class ShiroRedisCache<K, V> implements Cache<K, V> {
      */
     private String generateKey(K key) {
         return REDIS_SHIRO_CACHE_KEY_PREFIX + name + "_" + key;
+//        return getRedisCacheKey(key);
     }
 
     private byte[] getByteKey(K key) {
@@ -220,5 +220,53 @@ public class ShiroRedisCache<K, V> implements Cache<K, V> {
             return preKey.getBytes();
         }
         return serializer.serialize(key);
+    }
+
+
+    private String getRedisCacheKey(K key) {
+        Object redisKey = this.getStringRedisKey(key);
+        if (redisKey instanceof String) {
+            return this.REDIS_SHIRO_CACHE_KEY_PREFIX + redisKey;
+        } else {
+            return String.valueOf(redisKey);
+        }
+    }
+
+    private Object getStringRedisKey(K key) {
+        Object redisKey;
+        if (key instanceof PrincipalCollection) {
+            redisKey = this.getRedisKeyFromPrincipalCollection((PrincipalCollection) key);
+        } else {
+            redisKey = key.toString();
+        }
+        return redisKey;
+    }
+
+    private Object getRedisKeyFromPrincipalCollection(PrincipalCollection key) {
+        List realmNames = this.getRealmNames(key);
+        Collections.sort(realmNames);
+        Object redisKey = this.joinRealmNames(realmNames);
+        return redisKey;
+    }
+
+    private List<String> getRealmNames(PrincipalCollection key) {
+        ArrayList realmArr = new ArrayList();
+        Set realmNames = key.getRealmNames();
+        Iterator i$ = realmNames.iterator();
+        while (i$.hasNext()) {
+            String realmName = (String) i$.next();
+            realmArr.add(realmName);
+        }
+        return realmArr;
+    }
+
+    private Object joinRealmNames(List<String> realmArr) {
+        StringBuilder redisKeyBuilder = new StringBuilder();
+        for (int i = 0; i < realmArr.size(); ++i) {
+            String s = realmArr.get(i);
+            redisKeyBuilder.append(s);
+        }
+        String redisKey = redisKeyBuilder.toString();
+        return redisKey;
     }
 }
