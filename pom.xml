@@ -30,6 +30,12 @@
             <artifactId>shiro-spring-boot-starter</artifactId>
             <version>1.4.2</version>
         </dependency>
+        <!--引用整合依赖，本案例不使用starter依赖-->
+        <!--<dependency>
+            <groupId>org.apache.shiro</groupId>
+            <artifactId>shiro-spring</artifactId>
+            <version>1.5.2</version>
+        </dependency>-->
 
         <dependency>
             <groupId>org.springframework.boot</groupId>

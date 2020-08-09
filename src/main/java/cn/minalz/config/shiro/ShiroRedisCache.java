@@ -1,15 +1,16 @@
 package cn.minalz.config.shiro;
 
 import cn.minalz.model.ScmciwhUserModel;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheException;
 import org.apache.shiro.subject.PrincipalCollection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.JdkSerializationRedisSerializer;
 import org.springframework.data.redis.serializer.RedisSerializer;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -18,7 +19,7 @@ import java.util.stream.Collectors;
  *
  */
 public class ShiroRedisCache<K, V> implements Cache<K, V> {
-    private static Logger LOGGER = LogManager.getLogger(ShiroRedisCache.class);
+    private static Logger LOGGER = LoggerFactory.getLogger(ShiroRedisCache.class);
 
     /**
      * key前缀
@@ -40,6 +41,7 @@ public class ShiroRedisCache<K, V> implements Cache<K, V> {
      * 序列化工具
      */
     private RedisSerializer serializer = new JdkSerializationRedisSerializer();
+    private RedisSerializer serializer_key = new StringRedisSerializer();
 
     /**
      * 存储key的redis.list的key值
@@ -58,12 +60,12 @@ public class ShiroRedisCache<K, V> implements Cache<K, V> {
 
     @Override
     public V get(K key) throws CacheException {
-        LOGGER.debug("shiro redis cache get.{} K={}", name, key);
+        LOGGER.info("shiro redis cache get.{} K={}", name, key);
         RedisConnection redisConnection = null;
         V result = null;
         try {
             redisConnection = getConnection();
-            result = (V) serializer.deserialize(redisConnection.get(serializer.serialize(generateKey(key))));
+            result = (V) serializer.deserialize(redisConnection.get(serializer_key.serialize(generateKey(key))));
         } catch (Exception e) {
             LOGGER.error("shiro redis cache get exception. ", e);
         } finally {
@@ -76,16 +78,16 @@ public class ShiroRedisCache<K, V> implements Cache<K, V> {
 
     @Override
     public V put(K key, V value) throws CacheException {
-        LOGGER.debug("shiro redis cache put.{} K={} V={}", name, key, value);
+        LOGGER.info("shiro redis cache put.{} K={} V={}", name, key, value);
         RedisConnection redisConnection = null;
         V result = null;
         try {
             redisConnection = getConnection();
-            result = (V) serializer.deserialize(redisConnection.get(serializer.serialize(generateKey(key))));
+            result = (V) serializer.deserialize(redisConnection.get(serializer_key.serialize(generateKey(key))));
 
-            redisConnection.set(serializer.serialize(generateKey(key)), serializer.serialize(value));
+            redisConnection.set(serializer_key.serialize(generateKey(key)), serializer.serialize(value));
 
-            redisConnection.lPush(serializer.serialize(keyListKey), serializer.serialize(generateKey(key)));
+            redisConnection.lPush(serializer_key.serialize(keyListKey), serializer_key.serialize(generateKey(key)));
         } catch (Exception e) {
             LOGGER.error("shiro redis cache put exception. ", e);
         } finally {
@@ -98,16 +100,16 @@ public class ShiroRedisCache<K, V> implements Cache<K, V> {
 
     @Override
     public V remove(K key) throws CacheException {
-        LOGGER.debug("shiro redis cache remove.{} K={}", name, key);
+        LOGGER.info("shiro redis cache remove.{} K={}", name, key);
         RedisConnection redisConnection = null;
         V result = null;
         try {
             redisConnection = getConnection();
-            result = (V) serializer.deserialize(redisConnection.get(serializer.serialize(generateKey(key))));
+            result = (V) serializer.deserialize(redisConnection.get(serializer_key.serialize(generateKey(key))));
 
-            redisConnection.expireAt(serializer.serialize(generateKey(key)), 0);
+            redisConnection.expireAt(serializer_key.serialize(generateKey(key)), 0);
 
-            redisConnection.lRem(serializer.serialize(keyListKey), 1, serializer.serialize(key));
+            redisConnection.lRem(serializer_key.serialize(keyListKey), 1, serializer_key.serialize(key));
         } catch (Exception e) {
             LOGGER.error("shiro redis cache remove exception. ", e);
         } finally {
@@ -120,22 +122,22 @@ public class ShiroRedisCache<K, V> implements Cache<K, V> {
 
     @Override
     public void clear() throws CacheException {
-        LOGGER.debug("shiro redis cache clear.{}", name);
+        LOGGER.info("shiro redis cache clear.{}", name);
         RedisConnection redisConnection = null;
         try {
             redisConnection = getConnection();
 
-            Long length = redisConnection.lLen(serializer.serialize(keyListKey));
+            Long length = redisConnection.lLen(serializer_key.serialize(keyListKey));
             if (0 == length) {
                 return;
             }
 
-            List<byte[]> keyList = redisConnection.lRange(serializer.serialize(keyListKey), 0, length - 1);
+            List<byte[]> keyList = redisConnection.lRange(serializer_key.serialize(keyListKey), 0, length - 1);
             for (byte[] key : keyList) {
                 redisConnection.expireAt(key, 0);
             }
 
-            redisConnection.expireAt(serializer.serialize(keyListKey), 0);
+            redisConnection.expireAt(serializer_key.serialize(keyListKey), 0);
             keyList.clear();
         } catch (Exception e) {
             LOGGER.error("shiro redis cache clear exception.", e);
@@ -148,12 +150,12 @@ public class ShiroRedisCache<K, V> implements Cache<K, V> {
 
     @Override
     public int size() {
-        LOGGER.debug("shiro redis cache size.{}", name);
+        LOGGER.info("shiro redis cache size.{}", name);
         RedisConnection redisConnection = null;
         int length = 0;
         try {
             redisConnection = getConnection();
-            length = Math.toIntExact(redisConnection.lLen(serializer.serialize(keyListKey)));
+            length = Math.toIntExact(redisConnection.lLen(serializer_key.serialize(keyListKey)));
         } catch (Exception e) {
             LOGGER.error("shiro redis cache size exception.", e);
         } finally {
@@ -166,19 +168,19 @@ public class ShiroRedisCache<K, V> implements Cache<K, V> {
 
     @Override
     public Set keys() {
-        LOGGER.debug("shiro redis cache keys.{}", name);
+        LOGGER.info("shiro redis cache keys.{}", name);
         RedisConnection redisConnection = null;
         Set resultSet = null;
         try {
             redisConnection = getConnection();
 
-            Long length = redisConnection.lLen(serializer.serialize(keyListKey));
+            Long length = redisConnection.lLen(serializer_key.serialize(keyListKey));
             if (0 == length) {
                 return resultSet;
             }
 
-            List<byte[]> keyList = redisConnection.lRange(serializer.serialize(keyListKey), 0, length - 1);
-            resultSet = keyList.stream().map(bytes -> serializer.deserialize(bytes)).collect(Collectors.toSet());
+            List<byte[]> keyList = redisConnection.lRange(serializer_key.serialize(keyListKey), 0, length - 1);
+            resultSet = keyList.stream().map(bytes -> serializer_key.deserialize(bytes)).collect(Collectors.toSet());
         } catch (Exception e) {
             LOGGER.error("shiro redis cache keys exception.", e);
         } finally {
@@ -196,7 +198,7 @@ public class ShiroRedisCache<K, V> implements Cache<K, V> {
 
         List<Object> values = new ArrayList<Object>();
         for (Object key : keys) {
-            byte[] bytes = redisConnection.get(serializer.serialize(key));
+            byte[] bytes = redisConnection.get(serializer_key.serialize(key));
             values.add(serializer.deserialize(bytes));
         }
         return values;
@@ -219,7 +221,7 @@ public class ShiroRedisCache<K, V> implements Cache<K, V> {
             String preKey = generateKey(key);
             return preKey.getBytes();
         }
-        return serializer.serialize(key);
+        return serializer_key.serialize(key);
     }
 
 

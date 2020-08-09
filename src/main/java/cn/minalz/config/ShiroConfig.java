@@ -4,9 +4,12 @@ import cn.minalz.config.shiro.*;
 import cn.minalz.dao.ScmciwhUserRepository;
 import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.realm.Realm;
+import org.apache.shiro.session.SessionListener;
+import org.apache.shiro.session.mgt.SessionFactory;
 import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.session.mgt.eis.SessionDAO;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
+import org.apache.shiro.web.filter.authc.LogoutFilter;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +18,7 @@ import org.springframework.context.annotation.Configuration;
 
 import javax.servlet.Filter;
 import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
 @Configuration
@@ -47,9 +51,11 @@ public class ShiroConfig {
     public DefaultWebSecurityManager securityManager() {
         // 创建 DefaultWebSecurityManager 对象
         DefaultWebSecurityManager securityManager = new DefaultWebSecurityManager();
-        securityManager.setSessionManager(sessionManager());
+        // 配置 rememberMeCookie 查看源码可以知道，这里的rememberMeManager就仅仅是一个赋值，所以先执行
+//        securityManager.setRememberMeManager(rememberMeManager());
         // 设置其使用的 Realm
         securityManager.setRealm(this.realm());
+        securityManager.setSessionManager(sessionManager());
         return securityManager;
     }
 
@@ -80,7 +86,7 @@ public class ShiroConfig {
      * @return
      */
     /*@Bean
-    public MyLogoutFilter myLogoutFilter(){
+    public LogoutFilter myLogoutFilter(){
         return new MyLogoutFilter();
     }*/
 
@@ -99,6 +105,20 @@ public class ShiroConfig {
         MyRedisCacheManager cacheManager = new MyRedisCacheManager();
         return cacheManager;
     }
+
+    // 自定义shiroSessionFactroy
+//    @Bean
+    public SessionFactory sessionFactory(){
+        MyShiroSessionFactory myShiroSessionFactory = new MyShiroSessionFactory();
+        return myShiroSessionFactory;
+    }
+
+    // 自定义session监听器
+    /*@Bean
+    public SessionListener sessionListener(){
+        MyShiroSessionListener myShiroSessionListener = new MyShiroSessionListener();
+        return myShiroSessionListener;
+    }*/
 
     /**
      * 自定义会话管理器
@@ -119,6 +139,12 @@ public class ShiroConfig {
         // 设置会话定时检查
         //        sessionManager.setSessionValidationInterval(180000); //默认一小时
         //        sessionManager.setSessionValidationSchedulerEnabled(true);
+        // 设置自定义的sessionFactory
+//        sessionManager.setSessionFactory(sessionFactory());
+        // 设置自定义的session监听器
+//        LinkedList<SessionListener> listeners = new LinkedList<SessionListener>();
+//        listeners.add(sessionListener());
+//        sessionManager.setSessionListeners(listeners);
         return sessionManager;
     }
 

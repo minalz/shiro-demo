@@ -1,6 +1,8 @@
 package cn.minalz.config.shiro;
 
 import org.apache.shiro.session.Session;
+import org.apache.shiro.session.UnknownSessionException;
+import org.apache.shiro.session.mgt.ValidatingSession;
 import org.apache.shiro.session.mgt.eis.CachingSessionDAO;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +36,6 @@ public class ShiroRedisSessionDao extends CachingSessionDAO {
             logger.error("session or session id is null");
             return ;
         }
-        System.out.println("session时间过期了，需要进行删除---" + new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date()));
         //根据session id删除session
         redisTemplate.boundHashOps(SHIRO_SESSION_KEY).delete(session.getId());
     }
@@ -63,7 +64,7 @@ public class ShiroRedisSessionDao extends CachingSessionDAO {
      * @param session 要保存的session
      */
     private void saveSession(Session session) {
-        if (session == null || session.getId() == null) {
+        if (session == null || (session != null && session.getId() == null)) {
             logger.error("session or session id is null");
             return ;
         }

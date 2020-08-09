@@ -1,6 +1,7 @@
 package cn.minalz.controller;
 
 import cn.minalz.dao.ScmciwhUserRepository;
+import cn.minalz.model.ScmciwhUserModel;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.ExpiredCredentialsException;
 import org.apache.shiro.authc.IncorrectCredentialsException;
@@ -30,6 +31,7 @@ public class SecurityController {
 
     @GetMapping("/login")
     public String loginPage() {
+
         return "login.html";
     }
 
@@ -59,6 +61,15 @@ public class SecurityController {
             logger.error("[login][未知登陆错误：{}]", shiroLoginFailure);
         }
         return "登陆失败，原因：" + msg;
+    }
+
+    @RequestMapping("/user/logout")
+//    @ResponseBody
+    public String logout(){
+        System.out.println("执行退出登录的操作");
+        Subject subject = SecurityUtils.getSubject();
+        subject.logout();
+        return "redirect:/login";
     }
 
     @ResponseBody

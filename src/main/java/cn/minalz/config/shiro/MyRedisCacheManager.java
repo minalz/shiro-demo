@@ -10,6 +10,7 @@ import org.springframework.data.redis.core.RedisTemplate;
  * 自定义Redis的缓存管理器
  */
 public class MyRedisCacheManager implements CacheManager {
+
     @Autowired
     private RedisTemplate redisTemplate;
 
