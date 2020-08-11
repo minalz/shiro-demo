@@ -2,11 +2,8 @@ package cn.minalz;
 
 import cn.minalz.dao.ScmciwhRoleRepository;
 import cn.minalz.dao.ScmciwhUserRepository;
-import cn.minalz.model.ScmciwhRoleModel;
 import cn.minalz.model.ScmciwhUserModel;
-import cn.minalz.model.ScmciwhUserRoleModel;
 import com.alibaba.fastjson.JSON;
-import org.json.JSONObject;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +11,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.transaction.Transactional;
-import java.util.List;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest

@@ -1,10 +1,11 @@
 package cn.minalz.config;
 
+import cn.minalz.config.filter.AuthcShiroFilter;
+import cn.minalz.config.filter.MyLogoutFilter;
 import cn.minalz.config.shiro.*;
 import cn.minalz.dao.ScmciwhUserRepository;
 import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.realm.Realm;
-import org.apache.shiro.session.SessionListener;
 import org.apache.shiro.session.mgt.SessionFactory;
 import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.session.mgt.eis.SessionDAO;
@@ -18,7 +19,6 @@ import org.springframework.context.annotation.Configuration;
 
 import javax.servlet.Filter;
 import java.util.LinkedHashMap;
-import java.util.LinkedList;
 import java.util.Map;
 
 @Configuration
@@ -79,14 +79,6 @@ public class ShiroConfig {
         filterFactoryBean.setFilterChainDefinitionMap(this.filterChainDefinitionMap());
 
         return filterFactoryBean;
-    }
-
-    /**
-     * 配置自定义的shiro注销过滤器
-     * @return
-     */
-    public LogoutFilter myLogoutFilter(){
-        return new MyLogoutFilter();
     }
 
     /**
@@ -174,7 +166,10 @@ public class ShiroConfig {
      */
     private Map<String, Filter> myFilters(){
         Map<String, Filter> filtersMap = new LinkedHashMap<>();
-        filtersMap.put("logout", myLogoutFilter());
+        // 自定义authc权限验证的过滤器
+        filtersMap.put("authc", new AuthcShiroFilter());
+        // 配置自定义的shiro注销过滤器
+        filtersMap.put("logout", new MyLogoutFilter());
         return filtersMap;
     }
 

@@ -1,12 +1,8 @@
 package cn.minalz.controller;
 
 import cn.minalz.dao.ScmciwhUserRepository;
-import cn.minalz.model.ScmciwhUserModel;
 import org.apache.shiro.SecurityUtils;
-import org.apache.shiro.authc.ExpiredCredentialsException;
-import org.apache.shiro.authc.IncorrectCredentialsException;
-import org.apache.shiro.authc.LockedAccountException;
-import org.apache.shiro.authc.UnknownAccountException;
+import org.apache.shiro.authc.*;
 import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.filter.authc.FormAuthenticationFilter;
 import org.slf4j.Logger;
@@ -61,6 +57,25 @@ public class SecurityController {
             logger.error("[login][未知登陆错误：{}]", shiroLoginFailure);
         }
         return "登陆失败，原因：" + msg;
+        /*try{
+            // subject - securityManager - realm
+            Subject subject = SecurityUtils.getSubject();
+            AuthenticationToken token = new UsernamePasswordToken(username,password);
+            subject.login(token);
+            return "success";
+        }catch (UnknownAccountException e){
+            e.printStackTrace();
+            model.addAttribute("errMessage","用户不存在");
+            return "login";
+        }catch (IncorrectCredentialsException e){
+            e.printStackTrace();
+            model.addAttribute("errMessage","密码错误");
+            return "login";
+        }catch (Exception e){
+            e.printStackTrace();
+            model.addAttribute("errMessage","系统错误");
+            return "login";
+        }*/
     }
 
     @RequestMapping("/user/logout")

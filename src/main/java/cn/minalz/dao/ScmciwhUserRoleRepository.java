@@ -1,6 +1,5 @@
 package cn.minalz.dao;
 
-import cn.minalz.model.ScmciwhUserModel;
 import cn.minalz.model.ScmciwhUserRoleModel;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;

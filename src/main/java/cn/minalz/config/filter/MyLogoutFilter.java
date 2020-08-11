@@ -1,4 +1,4 @@
-package cn.minalz.config.shiro;
+package cn.minalz.config.filter;
 
 import org.apache.shiro.session.SessionException;
 import org.apache.shiro.subject.Subject;
@@ -10,7 +10,6 @@ import javax.servlet.ServletResponse;
 /**
  * 自定义shiro注销的过滤器
  */
-//@Service
 public class MyLogoutFilter extends LogoutFilter {
 
     @Override
