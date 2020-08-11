@@ -12,9 +12,9 @@ server:
 # Data Source
 spring:
   datasource:
-    url: "jdbc:mysql://192.1.136.117:3306/scmciwh300?autoReconnect=true&useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai"
+    url: "jdbc:mysql://47.96.73.9:3306/shiro_perm?autoReconnect=true&useUnicode=true&characterEncoding=utf-8&serverTimezone=Asia/Shanghai"
     username: root
-    password: 123456
+    password: zhouwei!7654321@
 
 ---
 # Database Pool
@@ -50,3 +50,11 @@ spring:
   redis:
     host: 47.96.73.9
     port: 6479  #可不配，因为底层默认值为6379
+
+# 账号
+# 超级管理员 cjgly 123456
+# 果料调配 gldp 123456
+
+# 服务器
+# 地址 47.96.73.9:22 密码 zhouwei!7654321@
+# 数据库 shiro_perm
