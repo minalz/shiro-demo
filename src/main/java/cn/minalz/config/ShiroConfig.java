@@ -38,10 +38,12 @@ public class ShiroConfig {
         MyRealm myRealm = new MyRealm();
         //告诉realm密码匹配方式
         myRealm.setCredentialsMatcher(myCredentialsMatcher());
-        myRealm.setAuthorizationCacheName("perms");
+        //开启授权信息的缓存，默认开启
         myRealm.setAuthorizationCachingEnabled(true);
-
+        myRealm.setAuthorizationCacheName("author");
+        //开启认证信息的缓存，默认关闭，key是UserNamePasswordToken，value就是principle
         myRealm.setAuthenticationCachingEnabled(false);
+        myRealm.setAuthenticationCacheName("authen");
         //设置缓存管理器
         myRealm.setCacheManager(cacheManager());
         return myRealm;
