@@ -73,7 +73,7 @@ public class ShiroConfig {
         filterFactoryBean.setUnauthorizedUrl("/unauthorized"); // 无权限 URL
 
         // 添加自定义的shiro注销过滤器
-//        filterFactoryBean.setFilters(myFilters());
+        filterFactoryBean.setFilters(myFilters());
 
         // <4> 设置 URL 的权限配置
         filterFactoryBean.setFilterChainDefinitionMap(this.filterChainDefinitionMap());
@@ -85,10 +85,9 @@ public class ShiroConfig {
      * 配置自定义的shiro注销过滤器
      * @return
      */
-    /*@Bean
     public LogoutFilter myLogoutFilter(){
         return new MyLogoutFilter();
-    }*/
+    }
 
     /**
      * 配置自定义的加密方式
@@ -173,10 +172,10 @@ public class ShiroConfig {
      * 自定义配置拦截器
      * @return
      */
-    /*private Map<String, Filter> myFilters(){
+    private Map<String, Filter> myFilters(){
         Map<String, Filter> filtersMap = new LinkedHashMap<>();
         filtersMap.put("logout", myLogoutFilter());
         return filtersMap;
-    }*/
+    }
 
 }
