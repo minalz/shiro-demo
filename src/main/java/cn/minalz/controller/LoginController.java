@@ -1,6 +1,6 @@
 package cn.minalz.controller;
 
-import cn.minalz.dao.ScmciwhUserRepository;
+import cn.minalz.dao.UserRepository;
 import org.apache.shiro.SecurityUtils;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.subject.Subject;
@@ -23,7 +23,7 @@ public class LoginController {
     private Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
-    private ScmciwhUserRepository scmciwhUserRepository;
+    private UserRepository scmciwhUserRepository;
 
     @GetMapping("/login")
     public String loginPage() {

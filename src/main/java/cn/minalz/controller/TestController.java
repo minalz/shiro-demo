@@ -1,6 +1,6 @@
 package cn.minalz.controller;
 
-import cn.minalz.dao.ScmciwhUserRepository;
+import cn.minalz.dao.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class TestController {
 
     @Autowired
-    private ScmciwhUserRepository scmciwhUserRepository;
+    private UserRepository scmciwhUserRepository;
 
     @GetMapping("/demo")
     public String demo() {

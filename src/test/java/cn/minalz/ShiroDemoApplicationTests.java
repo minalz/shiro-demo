@@ -1,8 +1,8 @@
 package cn.minalz;
 
-import cn.minalz.dao.ScmciwhRoleRepository;
-import cn.minalz.dao.ScmciwhUserRepository;
-import cn.minalz.model.ScmciwhUserModel;
+import cn.minalz.dao.RoleRepository;
+import cn.minalz.dao.UserRepository;
+import cn.minalz.model.User;
 import com.alibaba.fastjson.JSON;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -16,9 +16,9 @@ import javax.transaction.Transactional;
 @SpringBootTest
 public class ShiroDemoApplicationTests {
     @Autowired
-    private ScmciwhUserRepository scmciwhUserRepository;
+    private UserRepository userRepository;
     @Autowired
-    private ScmciwhRoleRepository scmciwhRoleRepository;
+    private RoleRepository roleRepository;
 
     @Test
     public void contextLoads() {
@@ -30,7 +30,7 @@ public class ShiroDemoApplicationTests {
     public void test1(){
 //        List<ScmciwhUserModel> all = scmciwhUserRepository.findAll();
 //        Object o = JSON.toJSON(all);
-        ScmciwhUserModel scmciwhUserModel = scmciwhUserRepository.findById(771).get();
+        User scmciwhUserModel = userRepository.findById(1l).get();
         Object o = JSON.toJSON(scmciwhUserModel);
         System.out.println(o);
         System.out.println("--------------");

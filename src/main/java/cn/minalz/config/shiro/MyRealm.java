@@ -1,9 +1,9 @@
 package cn.minalz.config.shiro;
 
-import cn.minalz.dao.ScmciwhUserRepository;
-import cn.minalz.model.ScmciwhPermissionModel;
-import cn.minalz.model.ScmciwhRoleModel;
-import cn.minalz.model.ScmciwhUserModel;
+import cn.minalz.dao.UserRepository;
+import cn.minalz.model.Permission;
+import cn.minalz.model.Role;
+import cn.minalz.model.User;
 import org.apache.shiro.authc.*;
 import org.apache.shiro.authz.AuthorizationInfo;
 import org.apache.shiro.authz.SimpleAuthorizationInfo;
@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 public class MyRealm extends AuthorizingRealm {
 
     @Autowired
-    private ScmciwhUserRepository scmciwhUserRepository;
+    private UserRepository scmciwhUserRepository;
 
     //获取权限信息的方法
     @Override
@@ -32,19 +32,19 @@ public class MyRealm extends AuthorizingRealm {
         SimpleAuthorizationInfo simpleAuthorizationInfo = new SimpleAuthorizationInfo();
         //获取用户名
         //此Principal就是彼Principal（认证时构造的）
-        ScmciwhUserModel user = (ScmciwhUserModel)principals.getPrimaryPrincipal();
+        User user = (User)principals.getPrimaryPrincipal();
 //        String username = user.getUsername();
         //从数据库查询用户的权限和角色
 //        List<ScmciwhRoleModel> roles = scmciwhUserRepository.findRolesByUsername(username);
-        Set<ScmciwhRoleModel> roles = user.getRoles();
-        Set<String> rolesSet = roles.stream().map(ScmciwhRoleModel::getRoleid).collect(Collectors.toSet());
+        Set<Role> roles = user.getRoles();
+        Set<String> rolesSet = roles.stream().map(Role::getRoleCode).collect(Collectors.toSet());
         if(rolesSet != null && rolesSet.size() > 0){
             simpleAuthorizationInfo.addRoles(rolesSet);
         }
         Set<String> permissionsSet = new HashSet<>();
         roles.forEach(x -> {
-            Set<ScmciwhPermissionModel> permissions = x.getPermissions();
-            Set<String> perms = permissions.stream().map(ScmciwhPermissionModel::getCode).collect(Collectors.toSet());
+            Set<Permission> permissions = x.getPermissions();
+            Set<String> perms = permissions.stream().map(Permission::getPermissionCode).collect(Collectors.toSet());
             permissionsSet.addAll(perms);
         });
         if(permissionsSet != null && permissionsSet.size() > 0){
@@ -62,7 +62,7 @@ public class MyRealm extends AuthorizingRealm {
 //        System.out.println(password + "---");
 //        System.out.println(String.valueOf(password));
         //获取用户
-        ScmciwhUserModel user = scmciwhUserRepository.findByUsername(username);
+        User user = scmciwhUserRepository.findByUsername(username);
         if(user == null){
             return null;
         }else{
@@ -78,7 +78,7 @@ public class MyRealm extends AuthorizingRealm {
      */
     @Override
     protected Object getAuthorizationCacheKey(PrincipalCollection principals) {
-        ScmciwhUserModel user = (ScmciwhUserModel) principals.getPrimaryPrincipal();
+        User user = (User) principals.getPrimaryPrincipal();
         return user.getUsername();
 //        return super.getAuthorizationCacheKey(principals);
     }
@@ -89,7 +89,7 @@ public class MyRealm extends AuthorizingRealm {
     @SuppressWarnings("unchecked")
     @Override
     protected Object getAuthenticationCacheKey(PrincipalCollection principals) {
-        ScmciwhUserModel user = (ScmciwhUserModel) principals.getPrimaryPrincipal();
+        User user = (User) principals.getPrimaryPrincipal();
         return user.getUsername();
 //        return super.getAuthenticationCacheKey(principals);
     }

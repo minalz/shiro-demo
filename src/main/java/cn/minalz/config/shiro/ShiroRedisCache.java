@@ -1,6 +1,5 @@
 package cn.minalz.config.shiro;
 
-import cn.minalz.model.ScmciwhUserModel;
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheException;
 import org.apache.shiro.subject.PrincipalCollection;

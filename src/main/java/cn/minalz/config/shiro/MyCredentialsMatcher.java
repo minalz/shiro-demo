@@ -1,6 +1,6 @@
 package cn.minalz.config.shiro;
 
-import cn.minalz.dao.ScmciwhUserRepository;
+import cn.minalz.dao.UserRepository;
 import cn.minalz.utils.Common;
 import org.apache.shiro.authc.AuthenticationInfo;
 import org.apache.shiro.authc.AuthenticationToken;
@@ -19,7 +19,7 @@ import java.util.Objects;
 public class MyCredentialsMatcher implements CredentialsMatcher {
 
     @Autowired
-    private ScmciwhUserRepository scmciwhUserRepository;
+    private UserRepository scmciwhUserRepository;
 
     @Override
     public boolean doCredentialsMatch(AuthenticationToken token, AuthenticationInfo info) {

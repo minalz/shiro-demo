@@ -3,14 +3,13 @@ package cn.minalz.config;
 import cn.minalz.config.filter.AuthcShiroFilter;
 import cn.minalz.config.filter.MyLogoutFilter;
 import cn.minalz.config.shiro.*;
-import cn.minalz.dao.ScmciwhUserRepository;
+import cn.minalz.dao.UserRepository;
 import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.realm.Realm;
 import org.apache.shiro.session.mgt.SessionFactory;
 import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.session.mgt.eis.SessionDAO;
 import org.apache.shiro.spring.web.ShiroFilterFactoryBean;
-import org.apache.shiro.web.filter.authc.LogoutFilter;
 import org.apache.shiro.web.mgt.DefaultWebSecurityManager;
 import org.apache.shiro.web.session.mgt.DefaultWebSessionManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +24,7 @@ import java.util.Map;
 public class ShiroConfig {
 
     @Autowired
-    private ScmciwhUserRepository scmciwhUserRepository;
+    private UserRepository scmciwhUserRepository;
 
     @Bean
     public Realm realm() {
