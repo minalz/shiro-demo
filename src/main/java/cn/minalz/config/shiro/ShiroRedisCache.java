@@ -109,7 +109,7 @@ public class ShiroRedisCache<K, V> implements Cache<K, V> {
 
             redisConnection.expireAt(serializer_key.serialize(generateKey(key)), 0);
 
-            redisConnection.lRem(serializer_key.serialize(keyListKey), 1, serializer_key.serialize(key));
+            redisConnection.lRem(serializer_key.serialize(keyListKey), 1, serializer_key.serialize(generateKey(key)));
         } catch (Exception e) {
             LOGGER.error("shiro redis cache remove exception. ", e);
         } finally {
