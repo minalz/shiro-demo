@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 
 @Controller
 @RequestMapping("/")
-public class SecurityController {
+public class LoginController {
 
     private Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -27,7 +27,10 @@ public class SecurityController {
 
     @GetMapping("/login")
     public String loginPage() {
-
+        Subject subject = SecurityUtils.getSubject();
+        if (subject.getPrincipal() != null) {
+            return "index.html";
+        }
         return "login.html";
     }
 
@@ -87,16 +90,16 @@ public class SecurityController {
         return "redirect:/login";
     }
 
-    @ResponseBody
     @GetMapping("/login_success")
+//    @ResponseBody
     public String loginSuccess() {
-        return "登录成功";
+        return "index.html";
     }
 
-    @ResponseBody
     @GetMapping("/unauthorized")
+//    @ResponseBody
     public String unauthorized() {
-        return "你没有权限";
+        return "unauthorized.html";
     }
 
 }
