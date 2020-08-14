@@ -24,6 +24,9 @@ public class MyFormAuthenticationFilter extends FormAuthenticationFilter {
     protected boolean onLoginSuccess(AuthenticationToken token, Subject subject, ServletRequest request, ServletResponse response) throws Exception {
         // 登录有一个问题 就是当session过期了 会根据之前旧的浏览器地址进行跳转 不太友好
         // 处理：直接跳转到登录页
+        // 最好的方式 应该是判断登录后的用户 是否有这个页面的访问权限，如果没有，那么直接跳转到登录页
+        // 如果有的话，应该直接往这个就得登录页进行跳转
+        // 现在存在的问题是，如果切换了用户，而之前的url，又是现用户无权限访问的，那么就会出现页面显示不友好的情况
         this.redirectToLogin(request, response);
         return false;
     }
