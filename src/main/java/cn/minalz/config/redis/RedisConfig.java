@@ -1,6 +1,5 @@
-package cn.minalz.config;
+package cn.minalz.config.redis;
 
-import com.alibaba.fastjson.support.spring.FastJsonRedisSerializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;

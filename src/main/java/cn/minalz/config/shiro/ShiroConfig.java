@@ -1,11 +1,12 @@
-package cn.minalz.config;
+package cn.minalz.config.shiro;
 
-import cn.minalz.config.filter.AuthcShiroFilter;
+import cn.minalz.config.filter.MyFormAuthenticationFilter;
 import cn.minalz.config.filter.MyLogoutFilter;
-import cn.minalz.config.shiro.*;
+import cn.minalz.config.redis.ShiroRedisSessionDao;
 import cn.minalz.dao.UserRepository;
 import org.apache.shiro.cache.CacheManager;
 import org.apache.shiro.realm.Realm;
+import org.apache.shiro.session.mgt.ExecutorServiceSessionValidationScheduler;
 import org.apache.shiro.session.mgt.SessionFactory;
 import org.apache.shiro.session.mgt.SessionManager;
 import org.apache.shiro.session.mgt.eis.SessionDAO;
@@ -95,6 +96,7 @@ public class ShiroConfig {
     @Bean
     public CacheManager cacheManager(){
         MyRedisCacheManager cacheManager = new MyRedisCacheManager();
+
         return cacheManager;
     }
 
@@ -123,14 +125,17 @@ public class ShiroConfig {
 
         // 设置会话过期时间
         // 默认半小时
-        sessionManager.setGlobalSessionTimeout(30*60*1000);
+        sessionManager.setGlobalSessionTimeout(20*1000);
         // 默认自动调用SessionDAO的delete方法删除会话
         sessionManager.setDeleteInvalidSessions(true);
         // 删除在session过期时跳转页面时自动在URL中添加JSESSIONID
         sessionManager.setSessionIdUrlRewritingEnabled(false);
-        // 设置会话定时检查
-        //        sessionManager.setSessionValidationInterval(180000); //默认一小时
-        //        sessionManager.setSessionValidationSchedulerEnabled(true);
+        //是否开启定时调度器进行检测过期session 默认为true
+        sessionManager.setSessionValidationSchedulerEnabled(true);
+        sessionManager.setSessionValidationScheduler(configSessionValidationScheduler());
+
+        // 设置会话定时检查 默认一小时
+        sessionManager.setSessionValidationInterval(5000);
         // 设置自定义的sessionFactory
 //        sessionManager.setSessionFactory(sessionFactory());
         // 设置自定义的session监听器
@@ -138,6 +143,18 @@ public class ShiroConfig {
 //        listeners.add(sessionListener());
 //        sessionManager.setSessionListeners(listeners);
         return sessionManager;
+    }
+
+    /**
+     * session会话验证调度器
+     * @return session会话验证调度器
+     */
+    @Bean
+    public ExecutorServiceSessionValidationScheduler configSessionValidationScheduler() {
+        ExecutorServiceSessionValidationScheduler sessionValidationScheduler = new ExecutorServiceSessionValidationScheduler();
+        //设置session的失效扫描间隔，单位为毫秒
+        sessionValidationScheduler.setInterval(20*1000);
+        return sessionValidationScheduler;
     }
 
     @Bean
@@ -168,7 +185,7 @@ public class ShiroConfig {
     private Map<String, Filter> myFilters(){
         Map<String, Filter> filtersMap = new LinkedHashMap<>();
         // 自定义authc权限验证的过滤器
-        filtersMap.put("authc", new AuthcShiroFilter());
+        filtersMap.put("authc", new MyFormAuthenticationFilter());
         // 配置自定义的shiro注销过滤器
         filtersMap.put("logout", new MyLogoutFilter());
         return filtersMap;

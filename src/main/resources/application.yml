@@ -43,4 +43,4 @@ spring:
 
 #logging:
 #    config: classpath:logback-spring.xml
-#    path: D:/shiro_demo_log
+#    path: log

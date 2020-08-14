@@ -1,8 +1,8 @@
 package cn.minalz.config.filter;
 
-import com.alibaba.fastjson.JSONObject;
+import org.apache.shiro.authc.AuthenticationToken;
+import org.apache.shiro.subject.Subject;
 import org.apache.shiro.web.filter.authc.FormAuthenticationFilter;
-import org.apache.shiro.web.util.WebUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestMethod;
 
@@ -18,7 +18,15 @@ import java.io.Writer;
 /**
  * 自定义authc权限验证的过滤器
  */
-public class AuthcShiroFilter extends FormAuthenticationFilter {
+public class MyFormAuthenticationFilter extends FormAuthenticationFilter {
+
+    @Override
+    protected boolean onLoginSuccess(AuthenticationToken token, Subject subject, ServletRequest request, ServletResponse response) throws Exception {
+        // 登录有一个问题 就是当session过期了 会根据之前旧的浏览器地址进行跳转 不太友好
+        // 处理：直接跳转到登录页
+        this.redirectToLogin(request, response);
+        return false;
+    }
 
     @Override
     protected boolean onAccessDenied(ServletRequest request, ServletResponse response) throws Exception{

@@ -1,5 +1,7 @@
 package cn.minalz.config.shiro;
 
+import cn.minalz.config.redis.ShiroRedisCache;
+import cn.minalz.utils.RedisUtil;
 import org.apache.shiro.cache.Cache;
 import org.apache.shiro.cache.CacheException;
 import org.apache.shiro.cache.CacheManager;
@@ -14,8 +16,11 @@ public class MyRedisCacheManager implements CacheManager {
     @Autowired
     private RedisTemplate redisTemplate;
 
+    @Autowired
+    private RedisUtil redisUtil;
+
     @Override
     public <K, V> Cache<K, V> getCache(String name) throws CacheException {
-        return new ShiroRedisCache(name,redisTemplate);
+        return new ShiroRedisCache(name,redisTemplate,redisUtil);
     }
 }

@@ -11,11 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.Objects;
 
 /**
- * @author Chen
+ * @author minalz
  * @Description 自定义shiro密码比较器
  * @create 2020-01-29 21:21
  */
-
 public class MyCredentialsMatcher implements CredentialsMatcher {
 
     @Autowired

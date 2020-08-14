@@ -29,7 +29,7 @@ public class LoginController {
     public String loginPage() {
         Subject subject = SecurityUtils.getSubject();
         if (subject.getPrincipal() != null) {
-            return "index.html";
+            return "redirect:/login_success";
         }
         return "login.html";
     }

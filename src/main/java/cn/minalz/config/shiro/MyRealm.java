@@ -68,6 +68,7 @@ public class MyRealm extends AuthorizingRealm {
         }else{
             //封装AuthenticationInfo
 //            ByteSource bsSalt = new SimpleByteSource(user.getPrivateSalt());
+//            new MySimpleByteSource(salt)
             SimpleAuthenticationInfo authenticationInfo = new SimpleAuthenticationInfo(user,user.getPassword(),null,getName());
             return authenticationInfo;
         }
@@ -86,11 +87,55 @@ public class MyRealm extends AuthorizingRealm {
     /**
      * 建议重写此方法，提供唯一的缓存Key
      */
-    @SuppressWarnings("unchecked")
     @Override
     protected Object getAuthenticationCacheKey(PrincipalCollection principals) {
         User user = (User) principals.getPrimaryPrincipal();
         return user.getUsername();
 //        return super.getAuthenticationCacheKey(principals);
+    }
+
+    /**
+     * 重写方法,清除当前用户的的 授权缓存
+     * @param principals
+     */
+    @Override
+    public void clearCachedAuthorizationInfo(PrincipalCollection principals) {
+        super.clearCachedAuthorizationInfo(principals);
+    }
+
+    /**
+     * 重写方法，清除当前用户的 认证缓存
+     * @param principals
+     */
+    @Override
+    public void clearCachedAuthenticationInfo(PrincipalCollection principals) {
+        super.clearCachedAuthenticationInfo(principals);
+    }
+
+    @Override
+    public void clearCache(PrincipalCollection principals) {
+        super.clearCache(principals);
+    }
+
+    /**
+     * 自定义方法：清除所有 授权缓存
+     */
+    public void clearAllCachedAuthorizationInfo() {
+        getAuthorizationCache().clear();
+    }
+
+    /**
+     * 自定义方法：清除所有 认证缓存
+     */
+    public void clearAllCachedAuthenticationInfo() {
+        getAuthenticationCache().clear();
+    }
+
+    /**
+     * 自定义方法：清除所有的  认证缓存  和 授权缓存
+     */
+    public void clearAllCache() {
+        clearAllCachedAuthenticationInfo();
+        clearAllCachedAuthorizationInfo();
     }
 }

@@ -1,5 +1,6 @@
 package cn.minalz.config.shiro;
 
+import cn.minalz.config.redis.ShiroRedisSessionDao;
 import org.apache.shiro.session.Session;
 import org.apache.shiro.session.SessionListener;
 import org.slf4j.Logger;
