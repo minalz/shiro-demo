@@ -27,13 +27,15 @@ public class Permission implements Serializable {
     // 菜单描述信息
     @Column(name = "permission_name")
     private String permissionName;
+    // 访问路径
+    private String url;
     // 父ID
     @Column(name = "parent_id")
     private Long parentId;
-    // 访问路径
-    private String url;
+    // 层级路径
+    private String path;
     // 菜单排序
-    private Integer order = 0;
+    private Integer sort = 0;
     // 菜单描述：0：页面，1：按钮
     private Integer type = 0;
     // 终端描述：0：PC，1：PDA
@@ -41,7 +43,7 @@ public class Permission implements Serializable {
     // 备注
     private String remark;
     // 状态：0：不启用，1：启用，2：删除
-    private Integer status = 0;
+    private Integer status = 1;
     // 更新用户
     @Column(name = "update_user")
     private String updateUser;
