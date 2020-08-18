@@ -33,23 +33,30 @@ public class TreeServcie implements ITreeService {
 
     @Override
     public TreeNode getTreeById(Long id) {
-        Optional<Permission> byId = permissionRepository.findById(id);
-        if (!byId.isPresent())
-            return null;
-        Permission permission = byId.get();
-        List<Permission> permissions = permissionRepository.findAll((root, criteriaQuery, criteriaBuilder) -> {
-            List<Predicate> predicates = new LinkedList<>();
-            predicates.add(criteriaBuilder.equal(root.get("path"), permission.getPath() + "," + permission.getId() + "%"));
-            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
-        });
-        if(permissions.size()==0)
-            return null;
-        List<TreeNode> nodes = new ArrayList<>();
-        permissions.forEach(x -> {
-            TreeNode treeNode = new TreeNode();
-            transferTreeNode(x, treeNode);
-            nodes.add(treeNode);
-        });
+//        Optional<Permission> byId = permissionRepository.findById(id);
+//        if (!byId.isPresent())
+//            return null;
+//        Permission permission = byId.get();
+//        List<Permission> permissions = permissionRepository.findAll((root, criteriaQuery, criteriaBuilder) -> {
+//            List<Predicate> predicates = new LinkedList<>();
+//            String path = permission.getPath();
+//            Long id1 = permission.getId();
+//            if(path.equals(String.valueOf(id1))){
+//                // 如果path和ID相等，说明这是一个root节点
+//                predicates.add(criteriaBuilder.like(root.get("path"), path + "," + "%"));
+//            }else{
+//                predicates.add(criteriaBuilder.like(root.get("path"), path + "," + id1 + "%"));
+//            }
+//            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+//        });
+//        if(permissions.size()==0)
+//            return null;
+//        List<TreeNode> nodes = new ArrayList<>();
+//        permissions.forEach(x -> {
+//            TreeNode treeNode = new TreeNode();
+//            transferTreeNode(x, treeNode);
+//            nodes.add(treeNode);
+//        });
         TreeNode treeNode = generateTreeNode(id);
         return treeNode;
     }
@@ -61,9 +68,15 @@ public class TreeServcie implements ITreeService {
 
     @Override
     public List<TreeNode> getChildrenById(Long id) {
-        List<Permission> permissions = permissionRepository.findByParentId(id);
-        if(permissions.size()==0)
-            return Collections.emptyList();
+//        List<Permission> permissions = permissionRepository.findByParentId(id);
+        List<Permission> permissions = permissionRepository.findAll((root, criteriaQuery, criteriaBuilder) -> {
+            List<Predicate> predicates = new LinkedList<>();
+            // 如果path和ID相等，说明这是一个root节点
+            // 那么条件就是id不等于传输进来的值 但是parentI的需要等于传进来的值
+            predicates.add(criteriaBuilder.equal(root.get("parentId"), id));
+            predicates.add(criteriaBuilder.notEqual(root.get("id"), id ));
+            return criteriaBuilder.and(predicates.toArray(new Predicate[0]));
+        });
         List<TreeNode> nodes = new ArrayList<>();
         permissions.forEach(x -> {
             TreeNode treeNode = new TreeNode();
@@ -76,13 +89,14 @@ public class TreeServcie implements ITreeService {
     @Override
     public TreeNode generateTreeNode(Long id){
         // 根据节点id查询该节点信息
-        TreeNode treeById = getTreeById(id);
+        TreeNode treeById = getById(id);
         // 根据该节点查询该节点的children节点
-        List<TreeNode> children = treeById.getChildren();
+        List<TreeNode> children = getChildrenById(id);
         children.forEach(x -> {
             TreeNode treeNode = generateTreeNode(x.getId());
-            treeNode.getChildren().add(treeNode);
+            treeById.getChildren().add(treeNode);
         });
+//        treeById.setChildren(children);
         return treeById;
     }
 
